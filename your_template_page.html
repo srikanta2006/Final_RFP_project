@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Builder</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <button id="saveResumeButton">Save Resume</button>
+
+    <script>
+        let generatedPDF = null;
+
+        async function generatePDF() {
+            const template = document.querySelector('.resume-template[style*="display: block"]');
+            if (!template) return null;
+            const canvas = await html2canvas(template, { backgroundColor: null, scale: 2 });
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jspdf.jsPDF('p', 'pt', 'a4');
+            const imgProps = pdf.getImageProperties(imgData);
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+            return pdf.output('blob');
+        }
+
+        function collectResumeData() {
+            return {
+                full_name: "{{ full_name }}",
+                email: "{{ email }}",
+                phone: "{{ phone }}",
+                linkedin: "{{ linkedin }}",
+                github: "{{ github }}",
+                summary: "{{ summary }}",
+                education: {{ education | tojson }},
+                experience: {{ experience | tojson }},
+                projects: {{ projects | tojson }},
+                skills: {{ skills | tojson }},
+                certifications: {{ certifications | tojson }},
+                achievements: {{ achievements | tojson }},
+                soft_skills: {{ soft_skills | tojson }}
+            };
+        }
+
+        document.getElementById('saveResumeButton').addEventListener('click', async function () {
+            const blob = await generatePDF();
+            if (!blob) return alert("No visible resume template found.");
+            const formData = new FormData();
+            const resumeData = collectResumeData();
+
+            const fileName = prompt("Enter resume name (no extension):");
+            if (!fileName) return alert("Name required.");
+
+            formData.append("pdf", blob, fileName + ".pdf");
+            formData.append("resume_json", JSON.stringify(resumeData));
+
+            fetch("/resume/save_resume", {
+                method: "POST",
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => alert(data.message || "Saved successfully!"))
+            .catch(() => alert("Save failed."));
+        });
+    </script>
+</body>
+</html>

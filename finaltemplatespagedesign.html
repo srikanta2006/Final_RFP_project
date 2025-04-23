@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Builder</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #e0eafc, #cfdef3);
+            margin: 0;
+            padding: 0;
+        }
+.line {
+    height: 1px;
+    background-color: #ccc;
+    margin: 20px 0;
+}
+
+        .container {
+            display: flex;
+            flex-direction: row;
+            padding: 20px;
+        }
+        .sidebar {
+            width: 250px;
+            padding: 20px;
+            background: #fff;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .resume-area {
+            flex-grow: 1;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .resume-template {
+            display: none;
+            padding: 30px;
+            border-radius: 10px;
+            margin: auto;
+            width: 80%;
+            box-sizing: border-box;
+            min-height: 1123px;
+        }
+        .classic { background: #f9f9f9; color: #333; }
+        .modern-blue { background: #e3f2fd; color: #0056b3; }
+        .elegant-minimal { background: #fff; color: #222; border-left: 4px solid #333; }
+        .corporate-style { background: #eef1f5; color: #444; }
+        .creative-dark { background: #222; color: #fff; }
+
+        .intro-section {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .intro-section h1 {
+            font-size: 2.5rem;
+            color: #333;
+            animation: slideIn 1s ease-out;
+        }
+        .intro-section p {
+            font-size: 1.1rem;
+            color: #555;
+            animation: fadeIn 1.5s ease-out;
+        }
+        .animated-images {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            animation: fadeIn 2s ease-out;
+        }
+        .animated-images img {
+            width: 150px;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+        .animated-images img:hover {
+            transform: scale(1.1);
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(0); }
+        }
+
+        select, input[type="color"], button {
+            margin-bottom: 10px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar" id="editor">
+            <label>Text Color:</label>
+            <input type="color" id="textColorPicker" onchange="changeTextColor(this.value)">
+            <label>Background Color:</label>
+            <input type="color" id="bgColorPicker" onchange="changeBgColor(this.value)">
+            <label>Text Size:</label>
+            <select id="textSizePicker" onchange="changeTextSize(this.value)">
+                <option value="16px">Default</option>
+                <option value="18px">Medium</option>
+                <option value="20px">Large</option>
+                <option value="24px">Extra Large</option>
+            </select>
+            <button onclick="downloadPDF()">Download as PDF</button>
+        </div>
+        <div class="resume-area">
+            <div class="intro-section">
+                <h1>Welcome to the Resume Builder</h1>
+                <p>Choose from a variety of professionally designed templates and create your perfect resume.</p>
+            </div>
+            
+            <div class="animated-images">
+                <img src="https://via.placeholder.com/150?text=Template+1" alt="Template 1">
+                <img src="https://via.placeholder.com/150?text=Template+2" alt="Template 2">
+                <img src="https://via.placeholder.com/150?text=Template+3" alt="Template 3">
+            </div>
+
+            <select id="colorTheme" onchange="changeTheme(this.value)">
+                <option disabled selected>Select Template</option>
+                <option value="classic">Classic</option>
+                <option value="modern-blue">Modern Blue</option>
+                <option value="elegant-minimal">Elegant Minimal</option>
+                <option value="corporate-style">Corporate Style</option>
+                <option value="creative-dark">Creative Dark</option>
+            </select>
+
+<div class="resume-template classic">
+    <h1>{{ full_name }}</h1>
+    <div class="info">
+        <div>Email: {{ email }}</div>
+        <div>Phone: {{ phone }}</div>
+        <div>
+            LinkedIn: <a href="{{ linkedin }}" target="_blank">{{ linkedin }}</a>
+        </div>
+        <div>
+            GitHub: <a href="{{ github }}" target="_blank">{{ github }}</a>
+        </div>
+    </div>
+    <div class="line"></div>
+
+    <div class="section">
+        <div class="section-title">Summary</div>
+        <p>{{ summary }}</p>
+    </div>
+    <div class="line"></div>
+
+    <div class="section">
+        <div class="section-title">Education</div>
+        {% for edu in education %}
+            <p><strong>{{ edu.degree }}</strong> - {{ edu.university }} ({{ edu.year }})</p>
+        {% endfor %}
+    </div>
+    <div class="line"></div>
+
+    <div class="section">
+        <div class="section-title">Experience</div>
+        {% for job in experience %}
+            <p><strong>{{ job.position }}</strong> at {{ job.company }} ({{ job.duration }})</p>
+            <ul>
+                <li>{{ job.responsibilities }}</li>
+            </ul>
+        {% endfor %}
+    </div>
+    <div class="line"></div>
+
+    <div class="section">
+        <div class="section-title">Projects</div>
+        {% for project in projects %}
+            <p><strong>{{ project.name }}</strong> - {{ project.description }}</p>
+        {% endfor %}
+    </div>
+    <div class="line"></div>
+
+    <div class="section">
+        <div class="section-title">Skills</div>
+        <ul>
+            {% for skill in skills %}
+                <li>{{ skill }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="line"></div>
+
+    <div class="section">
+        <div class="section-title">Certifications</div>
+        <ul>
+            {% for cert in certifications %}
+                <li>{{ cert }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="line"></div>
+
+    <div class="section">
+        <div class="section-title">Achievements</div>
+        <ul>
+            {% for achievement in achievements %}
+                <li>{{ achievement }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="line"></div>
+
+    <div class="section">
+        <div class="section-title">Soft Skills</div>
+        <ul>
+            {% for soft in soft_skills %}
+                <li>{{ soft }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div id="toast" class="fixed top-5 right-5 bg-green-600 text-white px-4 py-2 rounded shadow hidden z-50">
+        Resume saved successfully!
+    </div>
+    
+</div>
+
+
+            <div class="resume-template modern-blue">
+                <h1>{{ full_name }}</h1>
+                <h3>{{ summary }}</h3>
+                <h2>Education</h2>
+                {% for edu in education %}
+                    <p><strong>{{ edu.degree }}</strong> - {{ edu.institution }} ({{ edu.year }})</p>
+                {% endfor %}
+                <h2>Experience</h2>
+                {% for exp in experience %}
+                    <p><strong>{{ exp.position }}</strong> at {{ exp.company }} ({{ exp.years }})</p>
+                {% endfor %}
+            </div>
+
+            <div class="resume-template elegant-minimal">
+                <h1>{{ full_name }}</h1>
+                <p>{{ summary }}</p>
+                <h2>Education</h2>
+                {% for edu in education %}
+                    <p><strong>{{ edu.degree }}</strong> - {{ edu.institution }} ({{ edu.year }})</p>
+                {% endfor %}
+                <h2>Experience</h2>
+                {% for exp in experience %}
+                    <p><strong>{{ exp.position }}</strong> at {{ exp.company }} ({{ exp.years }})</p>
+                {% endfor %}
+            </div>
+
+            <div class="resume-template corporate-style">
+                <h1>{{ full_name }}</h1>
+                <p>{{ email }} | {{ phone }} | {{ linkedin }}</p>
+                <h2>Summary</h2>
+                <p>{{ summary }}</p>
+                <h2>Education</h2>
+                {% for edu in education %}
+                    <p><strong>{{ edu.degree }}</strong> - {{ edu.institution }} ({{ edu.year }})</p>
+                {% endfor %}
+                <h2>Skills</h2>
+                <ul>
+                    {% for skill in skills %}<li>{{ skill }}</li>{% endfor %}
+                </ul>
+            </div>
+
+            <div class="resume-template creative-dark">
+                <h1>{{ full_name }}</h1>
+                <p>{{ summary }}</p>
+                <h2>Education</h2>
+                {% for edu in education %}
+                    <p><strong>{{ edu.degree }}</strong> - {{ edu.institution }} ({{ edu.year }})</p>
+                {% endfor %}
+                <h2>Projects</h2>
+                {% for proj in projects %}
+                    <p><strong>{{ proj.title }}</strong>: {{ proj.description }}</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        function changeTheme(theme) {
+            document.querySelectorAll('.resume-template').forEach(el => el.style.display = 'none');
+            const selected = document.querySelector('.' + theme);
+            selected.style.display = 'block';
+            document.getElementById('editor').style.display = 'flex';
+        }
+
+        function changeTextColor(color) {
+            document.querySelectorAll('.resume-template').forEach(template => {
+                if (template.style.display === 'block') {
+                    template.querySelectorAll('h1, h2, h3, p').forEach(el => el.style.color = color);
+                }
+            });
+        }
+
+        function changeBgColor(color) {
+            document.querySelectorAll('.resume-template').forEach(template => {
+                if (template.style.display === 'block') {
+                    template.style.backgroundColor = color;
+                }
+            });
+        }
+
+        function changeTextSize(size) {
+            document.querySelectorAll('.resume-template').forEach(template => {
+                if (template.style.display === 'block') {
+                    template.querySelectorAll('h1, h2, h3, p').forEach(el => el.style.fontSize = size);
+                }
+            });
+        }
+
+        async function downloadPDF() {
+    const template = document.querySelector('.resume-template[style*="display: block"]');
+    
+    // Use html2pdf.js which is better suited for PDF export
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF();
+
+    // Convert the template to a canvas
+    const canvas = await html2canvas(template, {
+        backgroundColor: "#FFFFFF",  // Ensuring the background color is white
+        scale: 2,
+        useCORS: true
+    });
+
+    const imgData = canvas.toDataURL('image/png');
+
+    // Get the PDF width and height for an A4 page
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+    // Add the image to the PDF
+    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+
+    // Prompt for file name
+    const resumeName = prompt("Enter a name to save your resume:");
+    if (!resumeName) {
+        alert("Resume name is required to save.");
+        return;
+    }
+
+    const pdfBlob = pdf.output("blob");
+
+    // Save to server (Flask)
+    const formData = new FormData();
+    formData.append("pdf", pdfBlob, resumeName + ".pdf");
+
+    fetch("/resume/save_resume", {
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById("toast").classList.remove("hidden");
+        setTimeout(() => {
+            document.getElementById("toast").classList.add("hidden");
+        }, 3000);
+    })
+    .catch(error => {
+        console.error("Error saving to server:", error);
+    });
+
+    // Download the PDF locally
+    pdf.save(resumeName + ".pdf");
+}
+
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saved Resumes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-roboto">
+    <header class="bg-blue-600 text-white p-5 text-center">
+        <h1 class="text-2xl font-bold">Saved Resumes</h1>
+    </header>
+
+    <main class="container mx-auto mt-10">
+        <h2 class="text-xl font-bold mb-4 text-center">Your Saved Resumes</h2>
+        <ul class="bg-white shadow-md p-5 rounded-lg">
+            {% for resume in resumes %}
+            <li class="flex justify-between items-center border-b py-3">
+                <span>{{ resume }}</span>
+                <div>
+                    <!-- Preview Button -->
+                    <a href="{{ url_for('resume.preview_resume', filename=resume) }}" target="_blank"
+                       class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">
+                       Preview
+                    </a>
+
+                    <!-- Download Button -->
+                    <a href="{{ url_for('resume.download_resume', filename=resume) }}" 
+                       class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                       Download
+                    </a>
+
+                    <!-- Edit Button -->
+                    <a href="{{ url_for('resume.edit_resume', filename=resume) }}" 
+                       class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                       Edit
+                    </a>
+
+                    <!-- Delete Button -->
+                    <button class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600" 
+                            onclick="deleteResume('{{ resume }}')">
+                        Delete
+                    </button>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </main>
+
+    <script>
+        function deleteResume(filename) {
+            if (confirm("Are you sure you want to delete this resume?")) {
+                fetch(`/resume/delete_resume/${filename}`, {
+                    method: "POST"
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                    location.reload();  // Refresh the page after deletion
+                })
+                .catch(error => console.error("Error:", error));
+            }
+        }
+    </script>
+
+    <footer class="bg-blue-600 text-white py-5 text-center mt-10">
+        <a href="{{ url_for('resume.new_resume') }}" class="text-lg underline">Create New Resume</a>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+	<style>
+  /* Ensure the body takes the full height */
+  html, body {
+  height: 100%; /* Full viewport height */
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+
+main {
+  flex: 1; /* Pushes the footer down */
+}
+
+</style>
+
+</head>
+<body class="bg-gray-100 font-roboto">
+    <header class="bg-blue-600 text-white">
+        <div class="container mx-auto flex justify-between items-center p-5">
+            <div class="text-2xl font-bold">Resume Builder</div>
+            <nav class="space-x-4">
+                <a class="hover:underline" href="#">Home</a>
+                <a class="hover:underline" href="#">Contact</a>
+            </nav>
+        </div>
+    </header>
+    <main>
+    <section class="bg-white py-20">
+        <div class="container mx-auto text-center">
+            <h1 class="text-4xl font-bold mb-8 text-blue-600">Resume Builder Dashboard</h1>
+
+            <!-- Button Container -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- New Resume Button -->
+                <a href="{{ url_for('resume.new_resume') }}" class="bg-blue-100 p-8 rounded-xl shadow-lg hover:bg-blue-200 text-center transition">
+                    <i class="fas fa-pen text-blue-600 text-4xl mb-4"></i>
+                    <h3 class="text-xl font-bold">New Resume</h3>
+                </a>
+
+                <!-- Save Resume Button -->
+                <a href="{{ url_for('resume.saved_resumes') }}" class="bg-green-100 p-8 rounded-xl shadow-lg hover:bg-green-200 text-center transition">
+                    <i class="fas fa-save text-green-600 text-4xl mb-4"></i>
+                    <h3 class="text-xl font-bold">Saved Resumes</h3>
+                </a>
+                
+                
+                <!-- Sample Resume Button -->
+                <a href="sample_resume.html" class="bg-gray-100 p-8 rounded-xl shadow-lg hover:bg-gray-200 text-center transition">
+                    <i class="fas fa-file-alt text-gray-600 text-4xl mb-4"></i>
+                    <h3 class="text-xl font-bold">Sample Resume</h3>
+                </a>
+            </div>
+        </div>
+    </section>
+    </main>
+    <footer class="bg-blue-600 text-white py-10">
+        <div class="container mx-auto text-center">
+            <p>© 2025 Resume Builder. All rights reserved.</p>
+            <div class="mt-4 space-x-4">
+                <a class="hover:underline" href="#">Privacy Policy</a>
+                <a class="hover:underline" href="#">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
